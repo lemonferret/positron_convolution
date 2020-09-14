@@ -16,13 +16,13 @@ Input details:
 
 Examples:
 1) Convolution with single resolution.
->>>python3 convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 
+>>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 
 2) Convolution with two resolutions.
->>>python3 convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 -fwhm2=2.4
+>>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 -fwhm2=2.4
 3) Convolution and sw-parameters with single resolution.
->>>python3 convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9  -S=0.41 -Wmin=1.37 -Wmax=3.699
+>>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9  -S=0.41 -Wmin=1.37 -Wmax=3.699
 4) Convolution and sw-parameters with two resolutions.
->>>python3 convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 -fwhm2=1.3  -S=0.41 -Wmin=1.37 -Wmax=3.699
+>>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 -fwhm2=1.3  -S=0.41 -Wmin=1.37 -Wmax=3.699
 '''
 
 def parse_arguments():
