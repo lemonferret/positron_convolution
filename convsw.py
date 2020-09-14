@@ -9,10 +9,10 @@ import extract_s_w as sw
 Commandline tool to use new convolution codes.
 
 Do it like this:
->>> python3 convsw.py inputfile outputfile -fwhm1 [-fwhm2] [-S] [-Wmin] [-Wmax] 
+>>>./convsw.py inputfile outputfile -fwhm1 [-fwhm2] [-S] [-Wmin] [-Wmax] 
 
 Input details:
->>> python3 convsw.py -h
+>>>./convsw.py -h
 
 Examples:
 1) Convolution with single resolution.
