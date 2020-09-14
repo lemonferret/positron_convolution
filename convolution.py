@@ -38,31 +38,32 @@ def conv_mirror(input_array, fwhm, gaussian_range,qspacing):
 
 #then we only want the right half of the convoluted result, and we calculate the probability density.
     ind = len(input_array)-1
-    integrate = np.trapz(conv[ind:],input_array[:,0]*7.298202236578298)
+    integrate = np.trapz(conv[ind:], input_array[:,0]) #a.u.
+    #integrate = np.trapz(conv[ind:],input_array[:,0]*7.298202236578298)
     conv_prob_den = conv[ind:]/integrate
 
 #finally we combine x axix (from input array) and y axis(conv_prob_den).
-#the unit of x axis is converted from a.u. to 1e-3*m0*c
+#the unit of x axis is converted from a.u. to 1e-3*m0*c*
 #This probably can be done using only one function in one line. Anyway it works.
     final = []
     for i in range(len(input_array)):
-        final.append([input_array[i,0]*7.298202236578298,conv_prob_den[i]])
+        final.append([input_array[i,0], conv_prob_den[i]]) #a.u
+        #final.append([input_array[i,0]*7.298202236578298,conv_prob_den[i]])
     final = np.array(final)
     return final
 
 '''
 Here is the example of using my function
 '''
+
 #Read bulk Al data using numpy
 al = np.loadtxt("al-acar1d_100.dat", skiprows=2, usecols=(0,1))[:1200]
 
 #convolute
 al_conv = conv_mirror(al,4.3,5,0.01)
-
 #plot figure 
 plt.figure(1)
 plt.subplot(111)
-
 plt.plot(al_conv[:,0],al_conv[:,1],'b-',label = 'Al')
 
 plt.ylim(0.0000001,0.2)
@@ -71,4 +72,5 @@ plt.yscale('log')
 plt.xlabel('Momentum(1e-3 m0c)')
 plt.ylabel('probability')
 plt.legend(loc =1)
-plt.show()
+#plt.show()
+
