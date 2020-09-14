@@ -78,4 +78,4 @@ al_conv = conv_mirror(al,4.3,5,0.01)
 
 #calculate s and w
 al_s_w  = calc_s_w(3,10,27,al_conv)
-print(al_s_w)
+#print(al_s_w)
