@@ -10,20 +10,16 @@ import extract_s_w as sw
 Commandline tool to use new convolution codes.
 
 Do it like this:
->>>./convsw.py inputfile outputfile -fwhm1 [-fwhm2] [-swin] 
+>>>./convsw.py inputfile outputfile fwhm [-swin=swin] 
 
 Input details:
 >>>./convsw.py -h
 
 Examples:
-1) Convolution with single resolution.
->>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 
-2) Convolution with two resolutions.
->>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 -fwhm2=2.4
-3) Convolution and sw-parameters with single resolution.
->>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9  -swin=swin
-4) Convolution and sw-parameters with two resolutions.
->>>./convsw.py al-acar1d_100.dat al.dat -fwhm1=0.9 -fwhm2=1.3 -swin=swin
+1) Convolution.
+>>>./convsw.py al-acar1d_100.dat al.dat fwhm
+2) Convolution and sw-parameters.
+>>>./convsw.py al-acar1d_100.dat al.dat fwhm -swin=swin
 '''
 
 def parse_arguments():
@@ -50,14 +46,14 @@ def read_infile():
 	return indata
 
 def read_fwhmfile():
-	'''Read fwhm'''
+	'''Read fwhm file'''
 	with open(args.fwhm, 'r') as fwhmfile:
 		fwhm=[float(i) for i in fwhmfile.readline().split(' ') if i.strip()]
 	fwhmfile.close()
 	return fwhm
 		
 def read_swfile():
-	'''Read sw windows'''
+	'''Read sw windows file'''
 	with open(args.swin, 'r') as swin:
 		S=[float(i) for i in swin.readline().split(' ') if i.strip()]
 		W=[float(i) for i in swin.readline().split(' ') if i.strip()]
