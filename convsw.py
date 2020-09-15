@@ -27,8 +27,6 @@ def parse_arguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('infile',  help='input_filename')
 	parser.add_argument('outfile', help='output filename')
-	#parser.add_argument('-fwhm1', type=float, required=True, help='FWHM in keV, Energy resolution of setup, required')
-	#parser.add_argument('-fwhm2', type=float, required=False, help='FWHM in keV, Energy resolution of setup, optional')
 	parser.add_argument('fwhm', help='FWHM in keV, Energy resolution of setup')
 	parser.add_argument('-swin',  required=False, help='SW windows in a.u., optional')
 
