@@ -31,8 +31,9 @@ def parse_arguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('infile',  help='input_filename')
 	parser.add_argument('outfile', help='output filename')
-	parser.add_argument('-fwhm1', type=float, required=True, help='FWHM in keV, Energy resolution of setup, required')
-	parser.add_argument('-fwhm2', type=float, required=False, help='FWHM in keV, Energy resolution of setup, optional')
+	#parser.add_argument('-fwhm1', type=float, required=True, help='FWHM in keV, Energy resolution of setup, required')
+	#parser.add_argument('-fwhm2', type=float, required=False, help='FWHM in keV, Energy resolution of setup, optional')
+	parser.add_argument('fwhm', help='FWHM in keV, Energy resolution of setup')
 	parser.add_argument('-swin',  required=False, help='SW windows in a.u., optional')
 
 	args = parser.parse_args()
@@ -47,7 +48,14 @@ def read_infile():
 			if inline[0] <= 5.5: indata= np.vstack((indata, inline)) #momentum cutoff at 5.5 a.u or at max
 		infile.close()
 	return indata
-	
+
+def read_fwhmfile():
+	'''Read fwhm'''
+	with open(args.fwhm, 'r') as fwhmfile:
+		fwhm=[float(i) for i in fwhmfile.readline().split(' ') if i.strip()]
+	fwhmfile.close()
+	return fwhm
+		
 def read_swfile():
 	'''Read sw windows'''
 	with open(args.swin, 'r') as swin:
@@ -56,18 +64,18 @@ def read_swfile():
 	swin.close()
 	return S, W
 		
-def write_output(convdata1, convdata2=None):
+def write_output(fwhm, convdata1, convdata2=None):
 	'''Write convoluted data into output file'''			
 	with open(args.outfile, 'w+') as outfile:
 		outfile.write("Input file: %s \nTime: %s \n" % (args.infile, datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S")))
-		if args.fwhm2 == None: #if only fwhm1 is given
-			outfile.write('{0:<33}{1:<33}\n'.format(str(''), "FWHM1=%0.3f" %(args.fwhm1)))
+		if len(fwhm)==1: #if only fwhm1 is given
+			outfile.write('{0:<33}{1:<33}\n'.format(str(''), "FWHM1=%0.3f" %(fwhm[0])))
 			outfile.write('{0:<33}{1:<33}\n'.format('Momentum (a.u.)', 'Normalized spectrum (a.u.^{-1})'))
 			for i in convdata1:
 				outfile.write('{0:<33.9E}{1:<33.9E}\n'.format(i[0], i[1]))
 		else: #if fwhm1 and fwhm2 are given							
 			outfile.write('{0:<33}{1:<33}{2:<33}\n'.format(
-				str(''), "FWHM1=%0.3f" %(args.fwhm1), "FWHM2=%0.3f" %(args.fwhm2)))
+				str(''), "FWHM1=%0.3f" %(fwhm[0]), "FWHM2=%0.3f" %(fwhm[1])))
 			outfile.write('{0:<33}{1:<33}{2:<33}\n'.format(
 				'Momentum (a.u.)', 'Normalized spectrum (a.u.^{-1})', 'Normalized spectrum (a.u.^{-1})'))
 			for n, i in enumerate(convdata1):
@@ -79,7 +87,7 @@ def write_output_sw(S, W, sw1, sw2=None):
 	for line in fileinput.FileInput(args.outfile, inplace=1):
 		if "Time:" in line:
 			line = line.replace(line, line+'\nSW parameters with inputs S=[0, %f], W=[%f, %f]\n' % (S[1], W[0], W[1]))
-			if args.fwhm2 == None: #if only fwhm1 is given write sw1 under its column
+			if sw2 == None: #if only fwhm1 is given write sw1 under its column
 				line = line.replace(line, line+'{0:<33}{1:<33}\n{2:<33}{3:<33}\n'.format(
 					str(''), "S1=%0.9f" %(sw1[0]), 
 					str(''), "W1=%0.9f\n" %(sw1[1])))
@@ -92,23 +100,24 @@ def write_output_sw(S, W, sw1, sw2=None):
 def main():
 	if args.infile==args.outfile: os.exit('Input and output files have the same name.')		
 	indata = read_infile()
+	fwhm = read_fwhmfile()
 	qspacing = indata[1, 0] #first step
 	gaussian_range = indata[-1, 0] #last momentum
 	kev_to_mc= 3.91
-	
+
 	#convolution
-	convdata1 = conv.conv_mirror(indata, args.fwhm1*kev_to_mc, gaussian_range, qspacing)	#uses convolution.py and fwhm1
-	if args.fwhm2 != None:
-		convdata2 = conv.conv_mirror(indata, args.fwhm2*kev_to_mc, gaussian_range, qspacing)	#uses convolution.py and fwhm2 of given
-		write_output(convdata1, convdata2)	#in a.u
+	convdata1 = conv.conv_mirror(indata, fwhm[0]*kev_to_mc, gaussian_range, qspacing)	#uses convolution.py and fwhm1
+	if len(fwhm) == 2:
+		convdata2 = conv.conv_mirror(indata, fwhm[1]*kev_to_mc, gaussian_range, qspacing)	#uses convolution.py and fwhm2 of given
+		write_output(fwhm, convdata1, convdata2)	#in a.u
 	else:
-		write_output(convdata1)	#in a.u
+		write_output(fwhm, convdata1)	#in a.u
 
 	#sw-params
 	if args.swin !=None:
 		S, W = read_swfile()
 		sw1 = sw.calc_s_w(S[1], W[0], W[1], convdata1)	#uses extract_s_w.py for convoluted data with fwhm1 
-		if args.fwhm2 != None:
+		if len(fwhm) == 2:
 			sw2 = sw.calc_s_w(S[1], W[0], W[1], convdata2)	#uses extract_s_w.py for convoluted data with fwhm2, if given
 			write_output_sw(S, W, sw1, sw2)
 		else:
