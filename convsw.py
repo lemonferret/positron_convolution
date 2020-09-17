@@ -10,16 +10,16 @@ import extract_s_w as sw
 Commandline tool to use new convolution codes.
 
 Do it like this:
->>>./convsw.py inputfile outputfile fwhm [-swin=swin] 
+>>>convsw.py inputfile outputfile fwhm [-swin=swin] 
 
 Input details:
->>>./convsw.py -h
+>>>convsw.py -h
 
 Examples:
 1) Convolution.
->>>./convsw.py al-acar1d_100.dat al.dat fwhm
+>>>convsw.py al-acar1d_100.dat al.dat fwhm
 2) Convolution and sw-parameters.
->>>./convsw.py al-acar1d_100.dat al.dat fwhm -swin=swin
+>>>convsw.py al-acar1d_100.dat al.dat fwhm -swin=swin
 '''
 
 def parse_arguments():
