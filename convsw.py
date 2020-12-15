@@ -7,7 +7,8 @@ import fileinput
 import convolution as conv
 import extract_s_w as sw
 '''
-Commandline tool to use new convolution codes.
+Commandline tool to use new convolution codes. 
+25.11.2020
 
 Do it like this:
 >>>convsw.py inputfile outputfile fwhm [-swin=swin] 
@@ -38,8 +39,8 @@ def read_infile():
 	indata = np.empty([0, 2])
 	with open(args.infile, 'r') as infile:								
 		for line in infile.readlines()[2:]: #start the reading from line 2 to skip general info
-			inline= [float(i) for i in line.split(' ') if i.strip()]	
-			if inline[0] <= 5.5: indata= np.vstack((indata, inline)) #momentum cutoff at 5.5 a.u or at max
+			inline= [float(i) for i in line.split(' ') if i.strip()]
+			indata= np.vstack((indata, inline))	
 		infile.close()
 	return indata
 
@@ -66,14 +67,16 @@ def write_output(fwhm, convdata1, convdata2=None):
 			outfile.write('{0:<33}{1:<33}\n'.format(str(''), "FWHM1=%0.3f" %(fwhm[0])))
 			outfile.write('{0:<33}{1:<33}\n'.format('Momentum (a.u.)', 'Normalized spectrum (a.u.^{-1})'))
 			for i in convdata1:
-				outfile.write('{0:<33.9E}{1:<33.9E}\n'.format(i[0], i[1]))
+				if i[0] <=5.5: #momentum cutoff at 5.5 a.u or at max
+					outfile.write('{0:<33.9E}{1:<33.9E}\n'.format(i[0], i[1]))
 		else: #if fwhm1 and fwhm2 are given							
 			outfile.write('{0:<33}{1:<33}{2:<33}\n'.format(
 				str(''), "FWHM1=%0.3f" %(fwhm[0]), "FWHM2=%0.3f" %(fwhm[1])))
 			outfile.write('{0:<33}{1:<33}{2:<33}\n'.format(
 				'Momentum (a.u.)', 'Normalized spectrum (a.u.^{-1})', 'Normalized spectrum (a.u.^{-1})'))
 			for n, i in enumerate(convdata1):
-				outfile.write('{0:<33.9E}{1:<33.9E}{2:<33.9E}\n'.format(i[0], i[1], convdata2[n, 1]))
+				if i[0] <=5.5: #momentum cutoff at 5.5 a.u or at max
+					outfile.write('{0:<33.9E}{1:<33.9E}{2:<33.9E}\n'.format(i[0], i[1], convdata2[n, 1]))
 	outfile.close()		
 
 def write_output_sw(S, W, sw1, sw2=None):
@@ -98,7 +101,7 @@ def main():
 	qspacing = indata[1, 0] #first step
 	gaussian_range = indata[-1, 0] #last momentum
 	kev_to_mc= 3.91
-
+	
 	#convolution
 	convdata1 = conv.conv_mirror(indata, fwhm[0]*kev_to_mc, gaussian_range, qspacing)	#uses convolution.py and fwhm1
 	if len(fwhm) == 2:
@@ -120,4 +123,3 @@ def main():
 if __name__ == '__main__':
 	args = parse_arguments()
 	main()
-
