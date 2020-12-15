@@ -12,7 +12,7 @@ def Convolute_with_gaussian(fwhm,input_array,gaussian_range,qspacing):
 #For gaussian distribution function, gaussian_range is x range of gaussian func. I usually use 5.
 #the length of input array should be longer than 2n/qspacing. n is gaussian range.
 #if the input array is too short, change gaussian range to a smaller value.
-	momentRange = np.arange(-gaussian_range,gaussian_range,qspacing)
+	momentRange = np.arange(-gaussian_range,gaussian_range+qspacing,qspacing)
 	gaussian = []
 	for i in momentRange:
 		x = e**(-(i**2)/(2*(0.05818*fwhm)**2))
@@ -57,20 +57,20 @@ Here is the example of using my function
 '''
 
 #Read bulk Al data using numpy
-al = np.loadtxt("al-acar1d_100.dat", skiprows=2, usecols=(0,1))[:1200]
+#al = np.loadtxt("al-acar1d_100.dat", skiprows=2, usecols=(0,1))[:1200]
 
 #convolute
-al_conv = conv_mirror(al,4.3,5,0.01)
+#al_conv = conv_mirror(al,4.3,5,0.01)
 #plot figure 
-plt.figure(1)
-plt.subplot(111)
-plt.plot(al_conv[:,0],al_conv[:,1],'b-',label = 'Al')
+#plt.figure(1)
+#plt.subplot(111)
+#plt.plot(al_conv[:,0],al_conv[:,1],'b-',label = 'Al')
 
-plt.ylim(0.0000001,0.2)
-plt.xlim(0,80)
-plt.yscale('log')
-plt.xlabel('Momentum(1e-3 m0c)')
-plt.ylabel('probability')
-plt.legend(loc =1)
+#plt.ylim(0.0000001,0.2)
+#plt.xlim(0,80)
+#plt.yscale('log')
+#plt.xlabel('Momentum(1e-3 m0c)')
+#plt.ylabel('probability')
+#plt.legend(loc =1)
 #plt.show()
 
